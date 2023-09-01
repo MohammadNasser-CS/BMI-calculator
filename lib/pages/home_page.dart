@@ -1,5 +1,7 @@
+import 'package:course_bmi/pages/result_page.dart';
 import 'package:course_bmi/widgets/gender_widget.dart';
 import 'package:course_bmi/widgets/height_slided_widget.dart';
+import 'package:course_bmi/widgets/weight_age_cards.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,6 +14,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Gender _selectedGender = Gender.male;
   int _height = 120;
+  int _weight = 50;
+  int _age = 12;
+  double _calculateBMI() {
+    final heightPerMeter = _height / 100;
+    final bmi = _weight / (heightPerMeter * heightPerMeter);
+    return bmi;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +41,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
-          const SizedBox(height: 15.0),
+          const SizedBox(height: 12.0),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -60,37 +70,65 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 const SizedBox(height: 15.0),
-                HeightSlider(getHeight: ((newHeightValue) {
-                  _height=newHeightValue;
-                }),),
+                HeightSlider(
+                  getHeight: ((newHeightValue) {
+                    _height = newHeightValue;
+                  }),
+                ),
+                const SizedBox(height: 15.0),
+                Row(
+                  children: [
+                    Expanded(
+                        child: WeightAgeCard(
+                      title: 'WRIGHT',
+                      initialValue: 50,
+                      getValue: (newWeight) {
+                        _weight = newWeight;
+                      },
+                    )),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: WeightAgeCard(
+                        title: 'AGE',
+                        initialValue: 12,
+                        getValue: (newAge) {
+                          _age = newAge;
+                        },
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
-          )
+          ),
+          const SizedBox(height: 15.0),
+          SizedBox(
+            width: double.infinity,
+            child: MaterialButton(
+              onPressed: () {
+                double result = _calculateBMI();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ResultPage(bmi: result),
+                  ),
+                );
+              },
+              color: Colors.redAccent,
+              height: 53,
+              child: const SafeArea(
+                  top: false,
+                  child: Text(
+                    'Calculate Your Bmi',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  )),
+            ),
+          ),
         ],
       ),
     );
   }
 }
-
-
-/**
- * Column(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  const SizedBox(height: 12.0),
-                  HeightSlider(
-                    getHeight: (newHeightValue) {
-                      _height = newHeightValue;
-                    },
-                  ),
-                ],
-              ),
-            ),
-          )
-        ],
-      ),
- */
